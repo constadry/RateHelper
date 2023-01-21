@@ -8,5 +8,6 @@ namespace RateHelper.Repositories
     {
         Task<Rate> GetLastRate(DateTime updateDate);
         Task<Rate> GetLastRate();
+        Task CreateRate(Rate rate);
     }
 }

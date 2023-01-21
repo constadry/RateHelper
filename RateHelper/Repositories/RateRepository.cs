@@ -20,22 +20,29 @@ namespace RateHelper.Repositories
             var mongoDatabase =
                 mongoClient.GetDatabase(rateStoreDatabaseSettings.Value.DatabaseName);
             _rates = mongoDatabase.GetCollection<Rate>(
-                rateStoreDatabaseSettings.Value.RateCollectionName);
+                rateStoreDatabaseSettings.Value.RatesCollectionName);
         }
         
-        public Task<Rate> GetLastRate(DateTime updateDate)
+        public async Task<Rate> GetLastRate(DateTime updateDate)
         {
-            return _rates
-                       .AsQueryable()
-                       .OrderBy(x => x.UpdateDate)
-                       .FirstAsync(x => x.UpdateDate >= updateDate)
-                   ?? throw new Exception($"Rate by date {updateDate} not found");
+            // var filter = Builders<Rate>.Filter.Gte(x => x.UpdateDate, updateDate);
+            return await _rates.Find(x => x.UpdateDate >= updateDate)
+                .SortBy(x => x.UpdateDate)
+                .Limit(1)
+                .SingleAsync();
         }
 
-        public Task<Rate> GetLastRate()
+        public async Task<Rate> GetLastRate()
         {
-            return _rates.AsQueryable().OrderByDescending(x => x.UpdateDate).FirstAsync()
-                   ?? throw new Exception($"Rate not found");
+            return await _rates.Find(x => true)
+                .SortByDescending(x => x.UpdateDate)
+                .Limit(1)
+                .SingleAsync();
+        }
+
+        public async Task CreateRate(Rate rate)
+        {
+            await _rates.InsertOneAsync(rate);
         }
     }
 }

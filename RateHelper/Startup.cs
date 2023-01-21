@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -47,18 +48,8 @@ namespace RateHelper
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            // var options = Configuration.GetSection("RateStoreDatabase")
-            //     .Get<IOptions<RateStoreDatabaseSettings>>();
-            //
-            // try
-            // {
-            //     SampleData.Initialize(options);
-            // }
-            // catch (Exception e)
-            // {
-            //     Console.WriteLine(e.Message + "An error occurred seeding the DB.");
-            //     throw;
-            // }
+            var parser = new RateParsingService(new HttpClient());
+            parser.Scan();
         }
     }
 }

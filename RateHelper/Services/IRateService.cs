@@ -9,5 +9,6 @@ namespace RateHelper.Services
     {
         Task<RateResponse> GetLastRate(DateTime updateDate);
         Task<RateResponse> GetLastRate();
+        Task CreateRate(Rate rate);
     }
 }

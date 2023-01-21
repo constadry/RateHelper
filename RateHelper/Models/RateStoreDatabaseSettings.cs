@@ -4,6 +4,6 @@
     {
         public string ConnectionString { get; set; }
         public string DatabaseName { get; set; }
-        public string RateCollectionName { get; set; }
+        public string RatesCollectionName { get; set; }
     }
 }
