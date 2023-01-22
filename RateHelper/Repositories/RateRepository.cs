@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using RateHelper.Models;
 
@@ -12,6 +9,7 @@ namespace RateHelper.Repositories
     public class RateRepository : IRateRepository
     {
         private readonly IMongoCollection<Rate> _rates;
+        private const string _primaryPair = "eth_usd";
         
         public RateRepository(IOptions<RateStoreDatabaseSettings> rateStoreDatabaseSettings)
         {
@@ -26,7 +24,8 @@ namespace RateHelper.Repositories
         public async Task<Rate> GetLastRate(DateTime updateDate)
         {
             // var filter = Builders<Rate>.Filter.Gte(x => x.UpdateDate, updateDate);
-            return await _rates.Find(x => x.UpdateDate >= updateDate)
+            return await _rates.Find(x => x.UpdateDate >= updateDate
+                                          && x.RateName == _primaryPair)
                 .SortBy(x => x.UpdateDate)
                 .Limit(1)
                 .SingleAsync();
@@ -34,7 +33,7 @@ namespace RateHelper.Repositories
 
         public async Task<Rate> GetLastRate()
         {
-            return await _rates.Find(x => true)
+            return await _rates.Find(x => x.RateName == _primaryPair)
                 .SortByDescending(x => x.UpdateDate)
                 .Limit(1)
                 .SingleAsync();
