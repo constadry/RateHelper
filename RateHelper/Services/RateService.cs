@@ -40,5 +40,10 @@ namespace RateHelper.Services
                 return new RateResponse($"An error occurred when finding the rate: {ex.Message}");
             }
         }
+
+        public async Task CreateRate(Rate rate)
+        {
+            await _rateRepository.CreateRate(rate);
+        }
     }
 }

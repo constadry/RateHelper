@@ -48,7 +48,10 @@ namespace RateHelper
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            var parser = new RateParsingService(new HttpClient());
+            // var service = app.ApplicationServices.GetService<IRateService>();
+            using var scope = app.ApplicationServices.CreateScope();
+            var rateService = scope.ServiceProvider.GetRequiredService<IRateService>();
+            var parser = new RateParsingService(new HttpClient(), rateService);
             parser.Scan();
         }
     }
