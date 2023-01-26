@@ -1,0 +1,36 @@
+﻿version: '3.9'
+
+services:
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    volumes:
+      - mongo_db:/data/db
+      #- ./data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - ratehelper_network
+
+  web:
+    build: .
+    ports:
+      - "8000:80"
+      - "44348:443"
+    depends_on:
+      - mongo
+    volumes:
+      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+      - ${HOME}/.aspnet/https:/root/.aspnet/https/
+    networks:
+      - ratehelper_network
+
+networks:
+  ratehelper_network:
+    name: ratehelper_network
+
+volumes:
+  mongo_db:
+    name: mongo_db
